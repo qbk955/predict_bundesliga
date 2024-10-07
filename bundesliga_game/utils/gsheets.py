@@ -49,7 +49,6 @@ def init_gsheets():
         st.stop()
 
 
-
 def save_scoreboard(sheet, scoreboard):
     """
     Save the scoreboard DataFrame to Google Sheets.
