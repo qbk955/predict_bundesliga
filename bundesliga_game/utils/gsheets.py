@@ -95,3 +95,26 @@ def save_scoreboard(sheet, scoreboard):
         sheet.append_rows(rows, value_input_option='RAW')
     except Exception as e:
         st.error(f"Error saving scoreboard to Google Sheets: {e}")
+        
+def load_scoreboard(sheet):
+    """
+    Load the scoreboard from the Google Sheets.
+    Returns a sorted DataFrame.
+    """
+    try:
+        records = sheet.get_all_records()
+        scoreboard = pd.DataFrame(records)
+        # Ensure columns exist
+        expected_columns = ['Username', 'Score']
+        for col in expected_columns:
+            if col not in scoreboard.columns:
+                st.warning(f"Column '{col}' missing in Google Sheet. Re-initializing the scoreboard.")
+                sheet.clear()
+                sheet.append_row(expected_columns)
+                return pd.DataFrame(columns=expected_columns)
+        # Sort the scoreboard descending by 'Score'
+        scoreboard = scoreboard.sort_values(by='Score', ascending=False).reset_index(drop=True)
+        return scoreboard
+    except Exception as e:
+        st.error(f"Error loading scoreboard from Google Sheets: {e}")
+        return pd.DataFrame(columns=['Username', 'Score'])
