@@ -18,32 +18,14 @@ def init_gsheets():
         'https://www.googleapis.com/auth/drive'
     ]
 
-    # Determine the path to the credentials file
-    # Assumes that gsheets.py is inside the utils/ directory
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-    except NameError:
-        script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
-    
     # Create credentials using the service account info stored in Streamlit secrets
-    credentials_path = Credentials.from_service_account_info(
-    st.secrets["gcp_service_account"],
-    scopes=scopes
-)
-
-    # Check if the credentials file exists
-    if not os.path.exists(credentials_path):
-        st.error(f"Service account credentials file not found at path: {credentials_path}")
-        st.stop()
-
-    # Create credentials using the service account file
     try:
-        credentials = Credentials.from_service_account_file(
-            credentials_path,
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
             scopes=scopes
         )
     except Exception as e:
-        st.error(f"Error creating credentials from file: {e}")
+        st.error(f"Error creating credentials: {e}")
         st.stop()
 
     # Authorize the client
@@ -57,29 +39,14 @@ def init_gsheets():
     SPREADSHEET_ID = '1hQgm_XhoakMVVoi7vCXwa4MXKSOPkv59VWIVm3MhM2E'  # Replace with your actual Spreadsheet ID
     try:
         spreadsheet = client.open_by_key(SPREADSHEET_ID)
+        # Return the 'Scoreboard' worksheet or any specific worksheet you need
+        return spreadsheet.worksheet('Scoreboard')  # Adjust if needed
     except gspread.exceptions.SpreadsheetNotFound:
         st.error("Google Spreadsheet not found. Please check the Spreadsheet ID.")
         st.stop()
     except Exception as e:
         st.error(f"Error opening Google Spreadsheet: {e}")
         st.stop()
-
-    # Select the worksheet named 'Scoreboard'
-    try:
-        sheet = spreadsheet.worksheet('Scoreboard')
-    except gspread.exceptions.WorksheetNotFound:
-        # If the worksheet doesn't exist, create it
-        try:
-            sheet = spreadsheet.add_worksheet(title='Scoreboard', rows="1000", cols="2")
-            sheet.append_row(['Username', 'Score'])  # Add headers
-        except Exception as e:
-            st.error(f"Error creating 'Scoreboard' worksheet: {e}")
-            st.stop()
-    except Exception as e:
-        st.error(f"Error accessing 'Scoreboard' worksheet: {e}")
-        st.stop()
-    
-    return sheet
 
 
 
