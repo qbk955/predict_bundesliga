@@ -15,22 +15,25 @@ local_css()
 
 
 
-# Load data and modelss
 def load_resources():
     """
     Load the Bundesliga match data and the trained model.
     """
     try:
-        df = pd.read_csv('data/bundesliga_matches.csv')
+        # Get the absolute path of the CSV file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, 'data', 'bundesliga_matches.csv')
+        df = pd.read_csv(file_path)
     except FileNotFoundError:
         st.error("Data file 'bundesliga_matches.csv' not found in 'data/' directory.")
         st.stop()
     except Exception as e:
         st.error(f"Error loading data: {e}")
         st.stop()
-    
+
     try:
-        model = joblib.load('data/best_lr_model.pkl')
+        model_path = os.path.join(script_dir, 'data', 'best_lr_model.pkl')
+        model = joblib.load(model_path)
     except FileNotFoundError:
         st.error("Model file 'best_lr_model.pkl' not found in 'data/' directory.")
         st.stop()
