@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 import os
 import sys
+from google.oauth2 import service_account
 
 def init_gsheets():
     """
