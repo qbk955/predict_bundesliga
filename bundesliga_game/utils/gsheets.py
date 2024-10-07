@@ -39,15 +39,13 @@ def init_gsheets():
     SPREADSHEET_ID = '1hQgm_XhoakMVVoi7vCXwa4MXKSOPkv59VWIVm3MhM2E'  # Replace with your actual Spreadsheet ID
     try:
         spreadsheet = client.open_by_key(SPREADSHEET_ID)
-        # Return the 'Scoreboard' worksheet or any specific worksheet you need
-        return spreadsheet.worksheet('Scoreboard')  # Adjust if needed
+        return spreadsheet.worksheet('Scoreboard')  # Replace with the specific worksheet
     except gspread.exceptions.SpreadsheetNotFound:
         st.error("Google Spreadsheet not found. Please check the Spreadsheet ID.")
         st.stop()
     except Exception as e:
         st.error(f"Error opening Google Spreadsheet: {e}")
         st.stop()
-
 
 def save_scoreboard(sheet, scoreboard):
     """
